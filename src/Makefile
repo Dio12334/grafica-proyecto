@@ -3,13 +3,13 @@ CODEDIRS= .# where are the .c/.cpp?
 INCDIRS= .# where are the .h/.hpp?
 
 
-LINKERFLAGS = -lSDL2 -lSDL2_image
+LINKERFLAGS = -fopenmp -lSDL2 -lSDL2_image 
 CC=g++
 OPT=-O2
 # generate files that encode make rules for the .h dependencies
 DEPFLAGS=-MP -MD
 # automatically add the -I onto each include directory
-CFLAGS= -std=c++17 -Wall -Wextra -g $(foreach D,$(INCDIRS),-I$(D)) $(OPT) $(DEPFLAGS) 
+CFLAGS= -fopenmp -std=c++17 -Wall -Wextra -g $(foreach D,$(INCDIRS),-I$(D)) $(OPT) $(DEPFLAGS) 
 
 # for-style iteration (foreach) and regular expression completions (wildcard)
 CFILES=$(foreach D,$(CODEDIRS),$(wildcard $(D)/*.cpp))

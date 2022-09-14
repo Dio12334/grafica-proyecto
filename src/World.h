@@ -10,6 +10,7 @@ struct World{
 	class Camera* camera;
 	std::vector<class Object*> objects;
 	std::vector<class Light*> lights;
+	std::vector<class Firefly*> fireflies;
 	class Light* ambient;
 	class SDL_Renderer* renderer;
 
@@ -19,6 +20,8 @@ struct World{
 	void setRenderer(class SDL_Renderer*);
 	void addLight(class Light*);
 	void addObject(class Object*);
+	void addFirefly(class Firefly*);
+	void updatePositions(float deltaTime);
 	void changeCameraPosition(Math::Vector<float> position);
 	void createScenario();
 	void render();

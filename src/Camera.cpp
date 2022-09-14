@@ -4,8 +4,12 @@
 #include "Object.h"
 #include <limits>
 #include <algorithm>
+#include <SDL2/SDL_image.h>
+#include <sstream>
+#include <iomanip>
+#include <omp.h>
 
-void set_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel){
+inline void set_pixel(SDL_Surface *surface, int x, int y, Uint32 pixel){
 	Uint32 * const target_pixel = (Uint32 *) ((Uint8 *) surface->pixels 
 														+ y * surface->pitch
 														+ x * surface->format->BytesPerPixel);
@@ -59,19 +63,26 @@ SDL_Texture* Camera::createTexture(SDL_Renderer* renderer, std::vector<Object*> 
 
 
 	SDL_Surface* surf = SDL_CreateRGBSurface(0, w, h, 32, rmask, gmask, bmask, amask);
-		
-	Ray ray;
-	Color color;
+
 	// itero por todos los pixeles de la ventana
+/* #pragma omp parallel for */
+/* #pragma omp parallel for private(j) */
+#pragma omp parallel for default(none) shared(objects, lights, ambient, surf) 
 	for(std::size_t i = 0; i < w; ++i){
 		for(std::size_t j = 0; j < h; ++j){
 				
-			ray = throwRay(i, j);
-			color = calculateColor(ray, objects, lights, ambient, 1);
+			Ray ray = throwRay(i, j);
+			Color color = calculateColor(ray, objects, lights, ambient, 1);
 			set_pixel(surf, i, j, color.toUint32());
 		}
 	}
+
 	texture = SDL_CreateTextureFromSurface(renderer, surf);
+	static int frame = 0;
+	std::string title = "frames/frame_";
+	std::ostringstream record;
+	record << std::setw(2) << std::setfill('0') << frame++ << ".png";
+	IMG_SavePNG(surf, (title + record.str()).c_str());
 	return nullptr;
 }
 

@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Sphere.h"
 #include "Camera.h"
+#include "Firefly.h"
 
 void World::addLight(class Light* light){
 	lights.push_back(light);
@@ -38,4 +39,16 @@ void World::render(){
 
 void World::setRenderer(class SDL_Renderer * irenderer){
 	renderer = irenderer;
+}
+
+
+void World::addFirefly(class Firefly* firefly){
+	fireflies.push_back(firefly);
+	lights.push_back(firefly->light);
+	objects.push_back(firefly->object);
+}
+
+void World::updatePositions(float deltaTime){
+	for(auto firefly: fireflies)
+		firefly->updatePosition(deltaTime);
 }
