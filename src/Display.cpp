@@ -77,22 +77,22 @@ bool Display::initialize(std::size_t width, std::size_t height){
 	for(int i = 0; i < 5; ++i)
 		world->addFirefly(new Firefly(Point<float>(1, 1, 10)));
 
-	/* world->addObject(new Cilinder( */
-	/* 					Point<float>(0,0,0), // position */
-	/* 					Point<float>(0,0,20), // pb */
-	/* 					Color(Random::getVector(Vector<float>(0,0,0), Vector<float>(1,1,1))), //color; */
-	/* 					Random::getFloat(0, 1.F),  // ka */
-	/* 					Random::getFloat(0,1), // kd */
-	/* 					Random::getFloat(0,1), // ks */
-	/* 					Random::getFloat(0,1), //kr */
-	/* 					Random::getInt(0, 100), //n */
-	/* 					Random::getFloat(1,2), // idr normalmente mayor a 1 */
-	/* 					10)); // radius */
+	world->addObject(new Cilinder(
+						Point<float>(0,0,0), // position
+						Point<float>(0,0,20), // pb
+						Color(Random::getVector(Vector<float>(0,0,0), Vector<float>(1,1,1))), //color;
+						Random::getFloat(0, 0.1F),  // ka
+						Random::getFloat(0,0.1), // kd
+						Random::getFloat(0,1), // ks
+						Random::getFloat(0,1), //kr
+						Random::getInt(0, 1), //n
+						1.2, // idr normalmente mayor a 1
+						-10)); // radius
 
-	world->addLight(		
-			new Light(Point<float>(0,0,30), Color(1, 1, 1))
-		//new Light{Point<float>(0,0,100), Color(1,0,0)}
-			);
+	/* world->addLight( */		
+	/* 		new Light(Point<float>(0,0,30), Color(1, 1, 1)) */
+	/* 	//new Light{Point<float>(0,0,100), Color(1,0,0)} */
+	/* 		); */
 
 	world->setAmbient(new Light(Point<float>(30, 30, 30), Color(0.5,0.5,0.5)));
 	world->setCamera(new Camera(width, height, 4, Math::toRadians(60.0F), Point<float>(30, 30, 10), Point<float>(0,0,10), Vector<float>(0,0,-1)));
@@ -146,18 +146,12 @@ void Display::updateDisplay(){
 	float deltaTime = (SDL_GetTicks() - ticksCount)/1000.0f;
 	/* if(deltaTime > 0.0416) */
 	/* 	deltaTime = 0.0416; */
-	float angularVelocity = 0.33f;
+	float angularVelocity = 0.033f;
 	float radius = Math::length(world->camera->eye - world->camera->center);
 	static float angle = 0.0f;
 	angle += deltaTime*angularVelocity;
 	if(angle >= 2*M_PI)
 		angle = 0.0f;
-	/* float cameraZ = world->camera->eye.z; */
-	/* Vector<float> forwardVector = Math::normalize(world->camera->eye - world->camera->center); */
-	/* float angle = std::asin(forwardVector.y) + angularVelocity*deltaTime; */
-	/* Vector<float> newPos = radius * Vector<float>(std::cos(angle), std::sin(angle), 0); */
-	/* newPos.z = cameraZ; */
-	/* world->camera->eye = newPos; */
 	world->camera->eye.x = std::cos(angle) * radius;
 	world->camera->eye.y = std::sin(angle) * radius;
 	world->camera->init();
@@ -167,14 +161,14 @@ void Display::updateDisplay(){
 }
 
 void Display::generateOutput(){
-	/* static int frames = 0; */
-	/*  if(frames > 100) */ 
-	/* 	 isRunning = false; */ 
+	static int frames = 0;
+	 if(frames > 100) 
+		 isRunning = false; 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 	world->createScenario();
 	world->render();
 	SDL_RenderPresent(renderer);
-	/* ++frames; */
+	++frames;
 	
 }

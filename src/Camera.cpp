@@ -78,11 +78,11 @@ SDL_Texture* Camera::createTexture(SDL_Renderer* renderer, std::vector<Object*> 
 	}
 
 	texture = SDL_CreateTextureFromSurface(renderer, surf);
-	/* static int frame = 0; */
-	/* std::string title = "frames/frame_"; */
-	/* std::ostringstream record; */
-	/* record << std::setw(2) << std::setfill('0') << frame++ << ".png"; */
-	/* IMG_SavePNG(surf, (title + record.str()).c_str()); */
+	static int frame = 0;
+	std::string title = "frames/frame_";
+	std::ostringstream record;
+	record << std::setw(2) << std::setfill('0') << frame++ << ".png";
+	IMG_SavePNG(surf, (title + record.str()).c_str());
 	return nullptr;
 }
 
