@@ -5,7 +5,7 @@
 int main(int argc, char **argv){
 	Display display;
 		
-	if(display.initialize(600, 400))
+	if(display.initialize(1366, 768))
 		display.runLoop();
 	display.shutdown();
     return 0;
