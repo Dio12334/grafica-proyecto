@@ -39,15 +39,17 @@ bool Display::initialize(std::size_t width, std::size_t height){
 	Random::init();
 	world = new World();
 	world->setRenderer(renderer);
+	//set(vec3 _color, float _kd, float _ks=0, float _n=0, float _idr=0, float _kr=0
 	world->addObject(
 		new Plane(
 				Point<float>(0, 0, 0), // position
 				Color(1.0F, 1.0F, 1.0F),  // color
 				0.01F,  // ka
 				0.01F, // kd
-				1.0F, // ks
+				0.5F, // ks
+				1.F, //kr
 				20, // n
-				0.000F, // idr 
+				0, // idr 
 				Vector<float>(0,0,1).normalize() // d
 				)
 		);
@@ -60,30 +62,32 @@ bool Display::initialize(std::size_t width, std::size_t height){
 	for(int x = begX; x <= endX; x += 3){
 		for(int y = begY; y >= endY; y -= 3){
 			world->addObject(new Sphere(
-						Point<float>(x, y, 10), // position
+						Point<float>(x, y, 2), // position
 						Color(Random::getVector(Vector<float>(0,0,0), Vector<float>(1,1,1))), //color;
 						Random::getFloat(0, 0.01F),  // ka
 						Random::getFloat(0,1), // kd
 						Random::getFloat(0,1), // ks
+						Random::getFloat(0,1), // kr
 						Random::getInt(0, 100), //n
-						Random::getFloat(1,2), // idr
+						Random::getFloat(0,0), // idr
 						1)); // radius
 		}
 	}
 
-	for(int i = 0; i < 1; ++i)
+	for(int i = 0; i < 5; ++i)
 		world->addFirefly(new Firefly(Point<float>(1, 1, 10)));
 
-	world->addObject(new Cilinder(
-						Point<float>(0,0,0), // position
-						Point<float>(0,0,20), // pb
-						Color(Random::getVector(Vector<float>(0,0,0), Vector<float>(1,1,1))), //color;
-						Random::getFloat(0, 1.F),  // ka
-						Random::getFloat(0,1), // kd
-						Random::getFloat(0,1), // ks
-						Random::getInt(0, 100), //n
-						Random::getFloat(1,2), // idr normalmente mayor a 1
-						10)); // radius
+	/* world->addObject(new Cilinder( */
+	/* 					Point<float>(0,0,0), // position */
+	/* 					Point<float>(0,0,20), // pb */
+	/* 					Color(Random::getVector(Vector<float>(0,0,0), Vector<float>(1,1,1))), //color; */
+	/* 					Random::getFloat(0, 1.F),  // ka */
+	/* 					Random::getFloat(0,1), // kd */
+	/* 					Random::getFloat(0,1), // ks */
+	/* 					Random::getFloat(0,1), //kr */
+	/* 					Random::getInt(0, 100), //n */
+	/* 					Random::getFloat(1,2), // idr normalmente mayor a 1 */
+	/* 					10)); // radius */
 
 	world->addLight(		
 			new Light(Point<float>(0,0,30), Color(1, 1, 1))
@@ -163,14 +167,14 @@ void Display::updateDisplay(){
 }
 
 void Display::generateOutput(){
-	static int frames = 0;
-	 if(frames > 100) 
-		 isRunning = false; 
+	/* static int frames = 0; */
+	/*  if(frames > 100) */ 
+	/* 	 isRunning = false; */ 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
 	world->createScenario();
 	world->render();
 	SDL_RenderPresent(renderer);
-	++frames;
+	/* ++frames; */
 	
 }

@@ -11,17 +11,18 @@ struct Object{
 
 	Point<float> position;
 	Color color;
-	float ka, kd, ks;
+	float ka, kd, ks, kr;
 	float n;
 	float idr;
 	bool isLightSource = false;
 	Object() = default;
-	Object(Point<float> po, Color col, float ika, float ikd, float iks, float in, float iidr): 
+	Object(Point<float> po, Color col, float ika, float ikd, float iks, float ikr, float in, float iidr): 
 		position(po), 
 		color(col), 
 		ka(ika), 
 		kd(ikd), 
 		ks(iks), 
+		kr(ikr),
 		n(in),
 		idr(iidr),
 		isLightSource(false)

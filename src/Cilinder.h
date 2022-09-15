@@ -7,8 +7,8 @@ struct Cilinder: public Object{
 	Vector<float> pb;
 	float ra;
 
-	Cilinder(Vector<float> posa, Vector<float> posb, Color color, float ka, float kd, float ks, float n, float idr, float rada):
-		Object(posa, color, ka, kd, ks, n, idr), pb(posb), ra(rada){
+	Cilinder(Vector<float> posa, Vector<float> posb, Color color, float ka, float kd, float ks, float kr, float n, float idr, float rada):
+		Object(posa, color, ka, kd, ks, kr, n, idr), pb(posb), ra(rada){
 
 		}
 

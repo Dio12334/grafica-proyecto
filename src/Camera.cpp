@@ -70,7 +70,7 @@ SDL_Texture* Camera::createTexture(SDL_Renderer* renderer, std::vector<Object*> 
 #pragma omp parallel for default(none) shared(objects, lights, ambient, surf) 
 	for(std::size_t i = 0; i < w; ++i){
 		for(std::size_t j = 0; j < h; ++j){
-				
+			/* std::printf("%lu, %lu \n", i, j); */				
 			Ray ray = throwRay(i, j);
 			Color color = calculateColor(ray, objects, lights, ambient, 1);
 			set_pixel(surf, i, j, color.toUint32());
@@ -78,11 +78,11 @@ SDL_Texture* Camera::createTexture(SDL_Renderer* renderer, std::vector<Object*> 
 	}
 
 	texture = SDL_CreateTextureFromSurface(renderer, surf);
-	static int frame = 0;
-	std::string title = "frames/frame_";
-	std::ostringstream record;
-	record << std::setw(2) << std::setfill('0') << frame++ << ".png";
-	IMG_SavePNG(surf, (title + record.str()).c_str());
+	/* static int frame = 0; */
+	/* std::string title = "frames/frame_"; */
+	/* std::ostringstream record; */
+	/* record << std::setw(2) << std::setfill('0') << frame++ << ".png"; */
+	/* IMG_SavePNG(surf, (title + record.str()).c_str()); */
 	return nullptr;
 }
 
@@ -108,6 +108,7 @@ Color Camera::calculateColor(const Ray &ray, std::vector<class Object *> objects
 
 	Object* intersectedObject = nullptr;
 	Vector<float> surfaceNormal, L;
+	
 
 	if(prof > 7)
 		return result;
@@ -130,21 +131,23 @@ Color Camera::calculateColor(const Ray &ray, std::vector<class Object *> objects
 		Vector<float> difusa, especular;
 		Vector<float> V = Math::normalize(-1.0F*ray.direction);
 
-		Color reflexivo(0,0,0);
-		Color refractivo(0,0,0);
-		
-		float kr = intersectedObject->ks;
-		float kt = 0;
 		
 		for(auto light: lights){
-			L = Math::normalize(light->position - intersectionPoint);
+			L = light->position - intersectionPoint;
+			float longitud = L.length();
+			L.normalize();
+
 			Ray shadowRay(intersectionPoint, L);
 			bool existShadow = false;
 
 			for(auto shadowObject: objects){
-				if(!shadowObject->isLightSource && shadowObject != intersectedObject && shadowObject->intersect(shadowRay)){
-					existShadow = true;
-					break;
+				float tmp_l;
+				Vector<float> tmp_normal;
+				if(!shadowObject->isLightSource && shadowObject != intersectedObject && shadowObject->intersect(shadowRay, tmp_l, tmp_normal)){
+					if(shadowObject->idr == 0 && tmp_l <= longitud){
+						existShadow = true;
+						break;
+					}
 				}
 			}
 			if(!existShadow){
@@ -159,29 +162,33 @@ Color Camera::calculateColor(const Ray &ray, std::vector<class Object *> objects
 					especular = light->color * intersectedObject->ks * std::pow(factorEspecular, intersectedObject->n);
 				iluminations += difusa + especular;
 			}
-
-			bool outside = Math::dotProduct(ray.direction, surfaceNormal) < 0;
-			Vector<float> bias = 0.001 * surfaceNormal;
-
-			if(intersectedObject->idr > 0){
-				fresnel(ray.direction, surfaceNormal, intersectedObject->idr, kr);
-				if(kr < 1){
-					kt = 1 - kr;
-					Ray rayoRefractivo;
-					rayoRefractivo.origin = outside ? intersectionPoint - bias: intersectionPoint + bias;
-					rayoRefractivo.direction = Math::normalize(refract(ray.direction, surfaceNormal, intersectedObject->idr));
-					refractivo = calculateColor(rayoRefractivo, objects, lights, ambient, prof + 1);
-					
-				}
-			}
-			if(kr > 0){
-				Ray rayoReflexivo;
-				rayoReflexivo.origin = outside ? intersectionPoint - bias: intersectionPoint + bias;
-				rayoReflexivo.direction = Math::normalize(2 * Math::dotProduct(V, surfaceNormal) * surfaceNormal - V );
-				reflexivo = calculateColor(rayoReflexivo, objects, lights, ambient, prof + 1);
-			}
 		}
 		
+		bool outside = Math::dotProduct(ray.direction, surfaceNormal) < 0;
+		Vector<float> bias = 0.001 * surfaceNormal;
+		
+		Color reflexivo(0,0,0);
+		Color refractivo(0,0,0);
+		
+		float kr = intersectedObject->kr;
+		float kt = 0;
+		if(intersectedObject->idr > 0){
+			fresnel(ray.direction, surfaceNormal, intersectedObject->idr, kr);
+			if(kr < 1){
+				kt = 1 - kr;
+				Ray rayoRefractivo;
+				rayoRefractivo.origin = outside ? intersectionPoint - bias: intersectionPoint + bias;
+				rayoRefractivo.direction = Math::normalize(refract(ray.direction, surfaceNormal, intersectedObject->idr));
+				refractivo = calculateColor(rayoRefractivo, objects, lights, ambient, prof + 1);
+					
+			}
+		}
+		if(kr > 0){
+			Ray rayoReflexivo;
+			rayoReflexivo.origin = outside ? intersectionPoint - bias: intersectionPoint + bias;
+			rayoReflexivo.direction = Math::normalize(2 * Math::dotProduct(V, surfaceNormal) * surfaceNormal - V );
+			reflexivo = calculateColor(rayoReflexivo, objects, lights, ambient, prof + 1);
+		}
 		iluminations += intersectedObject->ka * ambient->color;
 		result = intersectedObject->color * iluminations;
 		result = result + reflexivo*kr + refractivo*kt;

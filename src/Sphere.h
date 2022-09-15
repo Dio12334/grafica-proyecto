@@ -13,7 +13,7 @@ struct Sphere: public Object{
 	Sphere(float rad): Object(), radius(rad){
 
 	}
-	Sphere(Vector<float> pos, Color color, float ka, float kd, float ks, float n , float idr, float rad):Object(pos, color, ka, kd, ks, n, idr), radius(rad){
+	Sphere(Vector<float> pos, Color color, float ka, float kd, float ks, float kr, float n , float idr, float rad):Object(pos, color, ka, kd, ks, kr, n, idr), radius(rad){
 	
 	}
 	

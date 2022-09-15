@@ -8,7 +8,8 @@ struct Plane: public Object{
 	Vector<float> N;
 	float d;
 
-	Plane(Point<float> position, Color col, float ka, float kd, float ks, float n, float idr, Vector<float> normal): Object(position, col, ka, kd, ks, n, idr), N(normal){
+	Plane(Point<float> position, Color col, float ka, float kd, float ks, float kr, float n, float idr, Vector<float> normal): 
+		Object(position, col, ka, kd, ks, kr, n, idr), N(normal){
 		d = - Math::dotProduct(position, N);
 	}
 
@@ -24,7 +25,8 @@ struct Plane: public Object{
 		if(nd == 0) return false;
 		minDistance = Math::dotProduct((N*d - ray.origin), N) / nd;
 		if(minDistance < 0) return false;
-		normal = nd > 0? -1.0F*N:N;
+		//normal = nd > 0? -1.0F*N:N;
+		normal = N;
 		return true;
 	}
 
