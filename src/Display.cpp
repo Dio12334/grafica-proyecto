@@ -44,10 +44,10 @@ bool Display::initialize(std::size_t width, std::size_t height){
 		new Plane(
 				Point<float>(0, 0, 0), // position
 				Color(1.0F, 1.0F, 1.0F),  // color
-				0.01F,  // ka
-				0.01F, // kd
-				0.5F, // ks
-				1.F, //kr
+				0.1F,  // ka
+				0.1F, // kd
+				0.1F, // ks
+				0.5F, //kr
 				20, // n
 				0, // idr 
 				Vector<float>(0,0,1).normalize() // d
@@ -67,7 +67,7 @@ bool Display::initialize(std::size_t width, std::size_t height){
 						Random::getFloat(0, 0.01F),  // ka
 						Random::getFloat(0,1), // kd
 						Random::getFloat(0,1), // ks
-						Random::getFloat(0,1), // kr
+						Random::getFloat(0,0), // kr
 						Random::getInt(0, 100), //n
 						Random::getFloat(0,0), // idr
 						1)); // radius
@@ -86,9 +86,20 @@ bool Display::initialize(std::size_t width, std::size_t height){
 						Random::getFloat(0,1), // ks
 						Random::getFloat(0,1), //kr
 						Random::getInt(0, 1), //n
-						1.2, // idr normalmente mayor a 1
+						0.8, // idr normalmente mayor a 1
 						-10)); // radius
 
+	world->addObject(new Sphere(
+					Point<float>(10,10,6),
+					Color(0,1,0.5),
+					Random::getFloat(0, 0.01F),  // ka
+					Random::getFloat(0,1), // kd
+					Random::getFloat(0,1), // ks
+					Random::getFloat(0,1), // kr
+					Random::getInt(0, 100), //n
+					Random::getFloat(0,0), // idr
+					2
+					));
 	/* world->addLight( */		
 	/* 		new Light(Point<float>(0,0,30), Color(1, 1, 1)) */
 	/* 	//new Light{Point<float>(0,0,100), Color(1,0,0)} */

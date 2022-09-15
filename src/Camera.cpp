@@ -185,7 +185,7 @@ Color Camera::calculateColor(const Ray &ray, std::vector<class Object *> objects
 		}
 		if(kr > 0){
 			Ray rayoReflexivo;
-			rayoReflexivo.origin = outside ? intersectionPoint - bias: intersectionPoint + bias;
+			rayoReflexivo.origin = outside ? intersectionPoint + bias: intersectionPoint - bias;
 			rayoReflexivo.direction = Math::normalize(2 * Math::dotProduct(V, surfaceNormal) * surfaceNormal - V );
 			reflexivo = calculateColor(rayoReflexivo, objects, lights, ambient, prof + 1);
 		}
