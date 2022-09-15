@@ -173,7 +173,7 @@ void Display::updateDisplay(){
 
 void Display::generateOutput(){
 	static int frames = 0;
-	 if(frames > 100) 
+	 if(frames > 720) 
 		 isRunning = false; 
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     SDL_RenderClear(renderer);
